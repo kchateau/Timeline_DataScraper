@@ -67,7 +67,13 @@ for url in url_list:
         except ValueError:
             pass
 
-        data_list = [game.string, month, day, year]
+        print(data_list)
+
+        try:
+            data_list = [game.string, month, day, year]
+        except AttributeError:
+            pass
+
         count += 1
         myData.append(data_list)
 
