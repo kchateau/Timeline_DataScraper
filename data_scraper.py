@@ -30,7 +30,7 @@ url_list = ["https://en.wikipedia.org/wiki/List_of_PC_games",
             "https://en.wikipedia.org/wiki/List_of_PC_games_(Z)",
             ]
 
-csvfile = "game_data.csv"
+csvfile = "output/game_data.csv"
 
 myData = [["Game", "Month", "Day", "Year"]]
 
@@ -41,16 +41,17 @@ for url in url_list:
     soup = BeautifulSoup(page.content, 'html.parser')
     temp = soup.find('div', class_="mw-parser-output")
     table = temp.findAll('table')[0]
+    rows = table.find('tbody').findAll('tr')
 
     count = 1
     data_list = []
 
     # For each row in table, find name/month/day/year
-    for tr in table:
+    for tr in rows:
         try:
             table_body = table.findAll('tr')[count]
         except IndexError:
-            break
+            continue
 
         try:
             game = table_body.findAll('i')[0]
@@ -58,7 +59,7 @@ for url in url_list:
             pass
 
         try:
-            date = table_body.findAll('td')[5].findAll('span')[1]
+            date = table_body.findAll('td')[5].findAll('span')[0]
         except IndexError:
             pass
 
@@ -67,15 +68,13 @@ for url in url_list:
         except ValueError:
             pass
 
-        print(data_list)
-
         try:
-            data_list = [game.string, month, day, year]
+            data_list = [game.string, month, day[:-1], year]
         except AttributeError:
             pass
 
-        count += 1
         myData.append(data_list)
+        count += 1
 
     myFile = open(csvfile, 'w')
     with myFile:
